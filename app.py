@@ -1,683 +1,367 @@
 import streamlit as st
 import requests
 
-
 # =========================================================
 # PAGE CONFIGURATION
 # =========================================================
-
 st.set_page_config(
     page_title="Student Mental Health Predictor",
     page_icon="🧠",
-    layout="wide",
-    initial_sidebar_state="collapsed"
+    layout="wide"
 )
 
-
-# =========================================================
-# FASTAPI URL
-# =========================================================
-
 API_URL = "http://127.0.0.1:8000/predict"
-
 
 # =========================================================
 # CUSTOM CSS
 # =========================================================
-
-st.markdown("""
-<style>
-
-/* =====================================================
-   MAIN PAGE
-   ===================================================== */
-
-.stApp {
-    background: #f8fafc;
-}
-
-.main .block-container {
-    max-width: 1400px;
-    padding-top: 2rem;
-    padding-bottom: 3rem;
-}
-
-
-/* =====================================================
-   HEADER
-   ===================================================== */
-
-.main-title {
-    text-align: center;
-    font-size: 38px;
-    font-weight: 750;
-    margin-bottom: 5px;
-    color: #1e293b;
-}
-
-.main-subtitle {
-    text-align: center;
-    font-size: 16px;
-    color: #64748b;
-    margin-bottom: 30px;
-}
-
-
-/* =====================================================
-   COLUMN SPACING & EQUAL-HEIGHT AUTO-MATCH
-   ===================================================== */
-
-/* 1. Make the row stretch its two columns to equal height */
-div[data-testid="stHorizontalBlock"] {
-    align-items: stretch !important;
-    gap: 1.5rem !important;
-}
-
-/* 2. Make each column a flex column so ITS child can grow to fill it */
-div[data-testid="stColumn"] {
-    display: flex;
-    flex-direction: column;
-}
-
-/* 3. Propagate that flex-fill down through Streamlit's wrapper divs */
-div[data-testid="stColumn"] > div,
-div[data-testid="stColumn"] [data-testid="stVerticalBlockBorderWrapper"] {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-
-/* =====================================================
-   INPUT AND RESULT CARDS
-   ===================================================== */
-
-/* 4. Your cards — now flex:1 actually has an ancestor to grow inside */
-.st-key-input_card,
-.st-key-result_card {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box !important;
-    border-radius: 18px !important;
-    padding: 1.2rem 1.3rem !important;
-    border: 1px solid #e2e8f0 !important;
-    box-shadow:
-        0 4px 12px rgba(0, 0, 0, 0.04),
-        0 10px 30px rgba(0, 0, 0, 0.05) !important;
-    overflow-y: auto !important;
-}
-
-
-/* =====================================================
-   LEFT CARD
-   ===================================================== */
-
-.st-key-input_card {
-    background: #ffffff !important;
-}
-
-
-/* =====================================================
-   RIGHT CARD
-   ===================================================== */
-
-.st-key-result_card {
-    background: linear-gradient(
-        135deg,
-        #eef2ff 0%,
-        #f5f3ff 100%
-    ) !important;
-    justify-content: center; /* centers the result content vertically */
-    overflow: hidden !important;
-}
-
-
-/* =====================================================
-   SECTION HEADINGS
-   ===================================================== */
-
-.section-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: #334155;
-    border-left: 5px solid #6366f1;
-    padding-left: 12px;
-    margin-top: 10px;
-    margin-bottom: 18px;
-}
-
-
-/* =====================================================
-   RESULT CONTENT
-   ===================================================== */
-
-.result-content {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    box-sizing: border-box;
-    padding: 2rem;
-}
-
-.result-icon {
-    font-size: 58px;
-    margin-bottom: 12px;
-}
-
-.result-title {
-    font-size: 27px;
-    font-weight: 700;
-    color: #334155;
-    margin-bottom: 10px;
-}
-
-.result-score {
-    font-size: 64px;
-    font-weight: 800;
-    color: #6366f1;
-    line-height: 1;
-    margin: 15px 0;
-}
-
-.result-label {
-    font-size: 16px;
-    color: #64748b;
-    margin-bottom: 20px;
-}
-
-.result-description {
-    max-width: 430px;
-    font-size: 16px;
-    line-height: 1.6;
-    color: #475569;
-}
-
-
-/* =====================================================
-   DISCLAIMER
-   ===================================================== */
-
-.disclaimer {
-    margin-top: 30px;
-    padding: 12px 16px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid #e2e8f0;
-    color: #64748b;
-    font-size: 13px;
-    line-height: 1.5;
-    max-width: 500px;
-}
-
-
-/* =====================================================
-   BUTTON
-   ===================================================== */
-
-div.stButton > button {
-    width: 100%;
-    height: 55px;
-    border-radius: 12px;
-    border: none;
-    background: linear-gradient(
-        90deg,
-        #6366f1,
-        #8b5cf6
-    );
-    color: white;
-    font-size: 17px;
-    font-weight: 650;
-    transition: all 0.2s ease;
-}
-
-div.stButton > button:hover {
-    transform: translateY(-2px);
-    box-shadow:
-        0 8px 20px rgba(99, 102, 241, 0.25);
-}
-
-
-/* =====================================================
-   INPUT LABELS
-   ===================================================== */
-
-label {
-    color: #475569 !important;
-    font-weight: 500 !important;
-}
-
-
-/* =====================================================
-   SUCCESS MESSAGE
-   ===================================================== */
-
-.success-box {
-    padding: 12px 18px;
-    border-radius: 10px;
-    background: #ecfdf5;
-    border: 1px solid #a7f3d0;
-    color: #047857;
-    font-size: 15px;
-    margin-top: 15px;
-}
-
-
-/* =====================================================
-   RESPONSIVE DESIGN
-   ===================================================== */
-
-@media (max-width: 900px) {
-
-    .main-title {
-        font-size: 30px;
+st.markdown(
+    """
+    <style>
+    .main {
+        background-color: #f5f7fa;
     }
 
-}
+    .app-header {
+        background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+        padding: 2rem 2rem;
+        border-radius: 16px;
+        margin-bottom: 2rem;
+        justify-content: center;
+        text-align: center;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    }
 
-</style>
-""", unsafe_allow_html=True)
+    .app-header h1 {
+        color: #ffffff;
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 0.3rem;
+    }
 
+    .app-header p {
+        color: #dbe4ff;
+        font-size: 1.05rem;
+        margin: 0;
+    }
+
+    div[class*="st-key-input_card"],
+    div[class*="st-key-result_card"] {
+        border-radius: 16px;
+        padding: 1.8rem 1.8rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.2rem;
+        min-height: 850px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    div[class*="st-key-input_card"] {
+        background-color: #ffffff;
+        border: 1px solid #eef0f4;
+    }
+
+    div[class*="st-key-result_card"] {
+        background-color: #ffffff;
+        border: 1px solid #eef0f4;
+    }
+
+    div[class*="st-key-input_card"] h2,
+    div[class*="st-key-result_card"] h2 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #182848;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #f0f2f6;
+        padding-bottom: 0.6rem;
+    }
+
+    .section-label {
+        font-size: 1.0rem;
+        font-weight: 600;
+        color: #4b6cb7;
+        margin-top: 1.0rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .stButton>button {
+        width: 100%;
+        background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 700;
+        padding: 0.8rem 0.8rem;
+        border-radius: 12px;
+        border: none;
+        margin-top: 1.5rem;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .stButton>button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(24, 40, 72, 0.35);
+        color: white;
+    }
+
+    .result-placeholder {
+        text-align: center;
+        color: #6b7280;
+        font-size: 1.05rem;
+        padding: 3rem 1rem;
+    }
+
+    .score-card {
+        text-align: center;
+        padding: 1.5rem 1rem 2rem 1rem;
+    }
+
+    .score-label {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #4b5563;
+        margin-bottom: 0.5rem;
+    }
+
+    .score-value {
+        font-size: 4rem;
+        font-weight: 800;
+        background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+    }
+
+    .interpretation-box {
+        background-color: #f0f4ff;
+        border-left: 5px solid #4b6cb7;
+        padding: 1rem 1.2rem;
+        border-radius: 10px;
+        color: #1f2937;
+        font-size: 1.0rem;
+        margin-top: 1rem;
+        text-align: left;
+    }
+
+    .disclaimer {
+        font-size: 0.85rem;
+        color: #9ca3af;
+        text-align: center;
+        margin-top: 2rem;
+        padding: 0.8rem;
+        border-top: 1px solid #e5e7eb;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # =========================================================
 # HEADER
 # =========================================================
-
-st.markdown("""
-<div class="main-title">
-🧠 Student Mental Health Predictor
-</div>
-<div class="main-subtitle">
-Predict a student's mental health score based on
-social media usage, academic lifestyle, and daily habits.
-</div>
-""", unsafe_allow_html=True)
-
+st.markdown(
+    """
+    <div class="app-header">
+        <h1>🧠 Student Mental Health Predictor</h1>
+        <p>Analyze student lifestyle and social media habits to predict a mental health score.</p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 # =========================================================
 # SESSION STATE
 # =========================================================
-
-if "prediction" not in st.session_state:
-    st.session_state.prediction = None
-
-if "prediction_status" not in st.session_state:
-    st.session_state.prediction_status = None
-
+if "prediction_result" not in st.session_state:
+    st.session_state.prediction_result = None
+if "prediction_error" not in st.session_state:
+    st.session_state.prediction_error = None
 
 # =========================================================
-# TWO COLUMNS
+# MAIN LAYOUT — TWO COLUMNS
 # =========================================================
+left_col, right_col = st.columns([1.2, 1], gap="large")
 
-col1, col2 = st.columns(
-    2,
-    gap="large"
-)
+# ---------------------------------------------------------
+# LEFT CONTAINER — USER INPUT
+# ---------------------------------------------------------
+with left_col:
+    with st.container(key="input_card"):
+        st.markdown("<h2>📝 Student Information</h2>", unsafe_allow_html=True)
 
+        # ---- Personal Information ----
+        st.markdown('<div class="section-label">Personal Information</div>', unsafe_allow_html=True)
+        p1, p2 = st.columns(2)
+        with p1:
+            age = st.number_input("Age", min_value=10, max_value=100, value=21, step=1)
+            gender = st.selectbox("Gender", ["Male", "Female"])
+        with p2:
+            country = st.text_input("Country", value="India")
+            academic_level = st.selectbox("Academic Level", ["Undergraduate", "Graduate", "High School"])
 
-# =========================================================
-# LEFT COLUMN — INPUTS
-# =========================================================
-
-with col1:
-
-    with st.container(
-        border=True,
-        key="input_card"
-    ):
-
-        # -------------------------------------------------
-        # PERSONAL INFORMATION
-        # -------------------------------------------------
-
-        st.markdown(
-            '<div class="section-title">Personal Information</div>',
-            unsafe_allow_html=True
-        )
-
-        age = st.number_input(
-            "Age",
-            min_value=10,
-            max_value=100,
-            value=21,
-            step=1
-        )
-
-        gender = st.selectbox(
-            "Gender",
-            [
-                "Female",
-                "Male"
-            ]
-        )
-
-        country = st.selectbox(
-            "Country",
-            [
-                "Other",
-                "India",
-                "USA",
-                "Canada",
-                "Australia",
-                "UK",
-                "Germany",
-                "Mexico",
-                "Turkey",
-                "France"
-            ]
-        )
-
-
-        # -------------------------------------------------
-        # ACADEMIC & SOCIAL MEDIA INFORMATION
-        # -------------------------------------------------
-
-        st.markdown(
-            '<div class="section-title">Academic &amp; Social Media</div>',
-            unsafe_allow_html=True
-        )
-
-        academic_level = st.selectbox(
-            "Academic Level",
-            [
-                "Undergraduate",
-                "Graduate",
-                "High School"
-            ]
-        )
-
-        most_used_platform = st.selectbox(
-            "Most Used Social Media Platform",
-            [
-                "Facebook",
-                "LinkedIn",
-                "Instagram",
-                "Snapchat",
-                "Twitter",
-                "YouTube",
-                "TikTok",
-                "LINE",
-                "KakaoTalk",
-                "VKontakte",
-                "WhatsApp",
-                "WeChat"
-            ]
-        )
-
-        purpose_of_use = st.selectbox(
-            "Purpose of Social Media Use",
-            [
-                "Networking",
-                "Education",
-                "Entertainment",
-                "News"
-            ]
-        )
-
-
-        # -------------------------------------------------
-        # SOCIAL MEDIA USAGE
-        # -------------------------------------------------
-
-        st.markdown(
-            '<div class="section-title">Social Media Usage</div>',
-            unsafe_allow_html=True
-        )
-
-        usage_col1, usage_col2 = st.columns(2)
-
-        with usage_col1:
-
-            avg_daily_usage_hours = st.number_input(
-                "Average Daily Usage (hours)",
-                min_value=0.0,
-                max_value=24.0,
-                value=4.5,
-                step=0.5,
-                format="%.2f"
-            )
-
-        with usage_col2:
-
-            daily_unlocks = st.number_input(
-                "Daily Unlocks",
-                min_value=0,
-                max_value=1000,
-                value=60,
-                step=1
-            )
-
-
-        # -------------------------------------------------
-        # LIFESTYLE INFORMATION
-        # -------------------------------------------------
-
-        st.markdown(
-            '<div class="section-title">Lifestyle Information</div>',
-            unsafe_allow_html=True
-        )
-
-        lifestyle_col1, lifestyle_col2 = st.columns(2)
-
-        with lifestyle_col1:
-
-            study_hours = st.number_input(
-                "Study Hours Per Day",
-                min_value=0.0,
-                max_value=24.0,
-                value=3.0,
-                step=0.5,
-                format="%.2f"
-            )
-
-            sleep_hours_per_night = st.number_input(
-                "Sleep Hours Per Night",
-                min_value=0.0,
-                max_value=24.0,
-                value=7.5,
-                step=0.5,
-                format="%.2f"
-            )
-
-        with lifestyle_col2:
-
-            physical_activity_hours = st.number_input(
-                "Physical Activity (hours)",
-                min_value=0.0,
-                max_value=24.0,
-                value=1.0,
-                step=0.5,
-                format="%.2f"
-            )
-
-            stress_level = st.selectbox(
-                "Stress Level",
+        # ---- Social Media Usage ----
+        st.markdown('<div class="section-label">Social Media Usage</div>', unsafe_allow_html=True)
+        s1, s2 = st.columns(2)
+        with s1:
+            most_used_platform = st.selectbox(
+                "Most Used Social Media Platform",
                 [
-                    "Low",
-                    "Medium",
-                    "High",
-                    "Very High"
+                    "Facebook", "LinkedIn", "Instagram", "Snapchat", "Twitter",
+                    "YouTube", "TikTok", "LINE", "KakaoTalk", "VKontakte",
+                    "WhatsApp", "WeChat"
                 ]
             )
+            purpose_of_use = st.selectbox(
+                "Purpose of Social Media Use",
+                ["Networking", "Education", "Entertainment", "News"]
+            )
+        with s2:
+            avg_daily_usage_hours = st.number_input(
+                "Average Daily Social Media Usage (hours)",
+                min_value=0.0, max_value=24.0, value=4.5, step=0.5
+            )
+            daily_unlocks = st.number_input(
+                "Daily Phone Unlocks", min_value=0, value=62, step=1
+            )
 
+        # ---- Lifestyle Information ----
+        st.markdown('<div class="section-label">Lifestyle Information</div>', unsafe_allow_html=True)
+        l1, l2, l3 = st.columns(3)
+        with l1:
+            study_hours = st.number_input(
+                "Study Hours Per Day", min_value=0.0, max_value=24.0, value=3.0, step=0.5
+            )
+        with l2:
+            physical_activity_hours = st.number_input(
+                "Physical Activity (hours)", min_value=0.0, max_value=24.0, value=1.0, step=0.5
+            )
+        with l3:
+            sleep_hours_per_night = st.number_input(
+                "Sleep Hours Per Night", min_value=0.0, max_value=24.0, value=7.5, step=0.5
+            )
 
-        # -------------------------------------------------
-        # PREDICT BUTTON
-        # -------------------------------------------------
+        stress_level = st.selectbox("Stress Level", ["Low", "Medium", "High", "Very High"])
 
-        st.write("")
+        predict_clicked = st.button("🔮 Predict Mental Health Score")
 
-        predict_button = st.button(
-            "🔮 Predict Mental Health Score",
-            use_container_width=True
-        )
+# ---------------------------------------------------------
+# HANDLE PREDICTION REQUEST
+# ---------------------------------------------------------
+if predict_clicked:
+    payload = {
+        "age": age,
+        "gender": gender,
+        "country": country,
+        "academic_level": academic_level,
+        "most_used_platform": most_used_platform,
+        "purpose_of_use": purpose_of_use,
+        "avg_daily_usage_hours": avg_daily_usage_hours,
+        "daily_unlocks": daily_unlocks,
+        "study_hours": study_hours,
+        "physical_activity_hours": physical_activity_hours,
+        "sleep_hours_per_night": sleep_hours_per_night,
+        "stress_level": stress_level
+    }
 
+    st.session_state.prediction_result = None
+    st.session_state.prediction_error = None
 
-        # -------------------------------------------------
-        # SEND DATA TO FASTAPI
-        # -------------------------------------------------
+    with st.spinner("Analyzing student data and generating prediction..."):
+        try:
+            response = requests.post(API_URL, json=payload, timeout=10)
 
-        if predict_button:
-
-            payload = {
-                "age": age,
-                "gender": gender,
-                "country": country,
-                "academic_level": academic_level,
-                "most_used_platform": most_used_platform,
-                "purpose_of_use": purpose_of_use,
-                "avg_daily_usage_hours": avg_daily_usage_hours,
-                "daily_unlocks": daily_unlocks,
-                "study_hours": study_hours,
-                "physical_activity_hours": physical_activity_hours,
-                "sleep_hours_per_night": sleep_hours_per_night,
-                "stress_level": stress_level
-            }
-
-            try:
-
-                with st.spinner("Analyzing student information..."):
-
-                    response = requests.post(
-                        API_URL,
-                        json=payload,
-                        timeout=30
+            if response.status_code == 200:
+                data = response.json()
+                score = data.get("predicted_mental_health_score")
+                if score is None:
+                    st.session_state.prediction_error = (
+                        "The API response did not contain 'predicted_mental_health_score'."
                     )
-
-                if response.status_code == 200:
-
-                    result = response.json()
-                    score = result["predicted_mental_health_score"]
-
-                    st.session_state.prediction = score
-                    st.session_state.prediction_status = "success"
-
                 else:
-
-                    st.session_state.prediction = None
-                    st.session_state.prediction_status = (
-                        f"API Error: {response.status_code}"
-                    )
-
-            except requests.exceptions.ConnectionError:
-
-                st.session_state.prediction = None
-                st.session_state.prediction_status = (
-                    "Could not connect to FastAPI."
+                    st.session_state.prediction_result = score
+            else:
+                st.session_state.prediction_error = (
+                    f"API returned an error (status code {response.status_code}): {response.text}"
                 )
 
-            except requests.exceptions.Timeout:
+        except requests.exceptions.ConnectionError:
+            st.session_state.prediction_error = (
+                "Unable to connect to the prediction API. "
+                "Please make sure the FastAPI backend is running at "
+                "http://127.0.0.1:8000."
+            )
+        except requests.exceptions.Timeout:
+            st.session_state.prediction_error = (
+                "The request to the prediction API timed out. Please try again."
+            )
+        except Exception as e:
+            st.session_state.prediction_error = f"An unexpected error occurred: {e}"
 
-                st.session_state.prediction = None
-                st.session_state.prediction_status = (
-                    "The API request timed out."
+# ---------------------------------------------------------
+# RIGHT CONTAINER — RESULT
+# ---------------------------------------------------------
+with right_col:
+    with st.container(key="result_card"):
+        st.markdown("<h2>📊 Prediction Result</h2>", unsafe_allow_html=True)
+
+        if st.session_state.prediction_error:
+            st.error(st.session_state.prediction_error)
+
+        elif st.session_state.prediction_result is not None:
+            score = st.session_state.prediction_result
+
+            if score < 4.0:
+                interpretation = (
+                    "Low mental health score. Consider paying more attention to "
+                    "stress, sleep, and overall lifestyle."
                 )
+                emoji = "🔴"
+            elif 4.0 <= score <= 7.0:
+                interpretation = (
+                    "Moderate mental health score. There may be room for "
+                    "improvement in lifestyle balance."
+                )
+                emoji = "🟡"
+            else:
+                interpretation = (
+                    "Good mental health score based on the provided lifestyle "
+                    "and social media habits."
+                )
+                emoji = "🟢"
 
-            except Exception as e:
-
-                st.session_state.prediction = None
-                st.session_state.prediction_status = f"Error: {str(e)}"
-
-
-# =========================================================
-# RIGHT COLUMN — RESULT
-# =========================================================
-
-with col2:
-
-    with st.container(
-        border=True,
-        key="result_card"
-    ):
-
-        # -------------------------------------------------
-        # NO PREDICTION YET
-        # -------------------------------------------------
-
-        if st.session_state.prediction is None:
-
-            st.markdown("""
-<div class="result-content">
-<div class="result-icon">🧠</div>
-<div class="result-title">Mental Health Score</div>
-<div class="result-score">—</div>
-<div class="result-label">Your prediction will appear here</div>
-<div class="result-description">
-Enter the student's information on the left and click
-<b>Predict Mental Health Score</b> to generate a prediction.
-</div>
-<div class="disclaimer">
-<b>Note:</b> This prediction is for educational and informational
-purposes only. It is not a medical diagnosis or a substitute for
-professional mental health advice.
-</div>
-</div>
-""", unsafe_allow_html=True)
-
-
-        # -------------------------------------------------
-        # PREDICTION AVAILABLE
-        # -------------------------------------------------
+            st.markdown(
+                f"""
+                <div class="score-card">
+                    <div class="score-label">Predicted Mental Health Score</div>
+                    <div class="score-value">{score:.2f}</div>
+                    <div style="font-size: 2rem;">{emoji}</div>
+                    <div class="interpretation-box">{interpretation}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
         else:
-
-            score = float(st.session_state.prediction)
-
-            # ---------------------------------------------
-            # SCORE INTERPRETATION
-            # ---------------------------------------------
-
-            if score < 40:
-                interpretation = "Low Mental Health Score"
-                description = (
-                    "The predicted score indicates a lower "
-                    "mental health score based on the provided "
-                    "student information."
-                )
-            elif score <= 70:
-                interpretation = "Moderate Mental Health Score"
-                description = (
-                    "The predicted score indicates a moderate "
-                    "mental health score based on the provided "
-                    "student information."
-                )
-            else:
-                interpretation = "Good Mental Health Score"
-                description = (
-                    "The predicted score indicates a relatively "
-                    "good mental health score based on the "
-                    "provided student information."
-                )
-
-            # ---------------------------------------------
-            # RESULT DISPLAY
-            # ---------------------------------------------
-
-            st.markdown(f"""
-<div class="result-content">
-<div class="result-icon">🧠</div>
-<div class="result-title">Mental Health Score</div>
-<div class="result-score">{score:.2f}</div>
-<div class="result-label">out of 100</div>
-<div class="result-description">
-<strong>{interpretation}</strong><br><br>
-{description}
-</div>
-<div class="disclaimer">
-<b>Important:</b> This prediction is for educational and
-informational purposes only. It is not a professional medical
-diagnosis.
-</div>
-</div>
-""", unsafe_allow_html=True)
-
+            st.markdown(
+                """
+                <div class="result-placeholder">
+                    👈 Enter your information and click the prediction button
+                    to see the result.
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
 # =========================================================
-# ERROR MESSAGE
+# DISCLAIMER
 # =========================================================
-
-if st.session_state.prediction_status not in [None, "success"]:
-    st.error(st.session_state.prediction_status)
+st.markdown(
+    """
+    <div class="disclaimer">
+        ⚠️ This prediction is generated by a machine learning model and is intended
+        for educational purposes only. It should not be considered a professional
+        medical diagnosis. If you are struggling with your mental health, please
+        reach out to a qualified professional.
+    </div>
+    """,
+    unsafe_allow_html=True
+)
