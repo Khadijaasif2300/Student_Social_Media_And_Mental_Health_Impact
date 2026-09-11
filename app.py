@@ -23,30 +23,26 @@ st.markdown(
     }
 
     .app-header {
-        background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
-        padding: 2rem 2rem;
-        border-radius: 16px;
-        margin-bottom: 2rem;
+        background: #fff;
+        margin-bottom: 5rem;
         justify-content: center;
         text-align: center;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
     }
 
     .app-header h1 {
-        color: #ffffff;
+        color: #1f4438;
         font-size: 2.2rem;
         font-weight: 700;
         margin-bottom: 0.3rem;
     }
 
     .app-header p {
-        color: #dbe4ff;
+        color: #1f4438;
         font-size: 1.05rem;
         margin: 0;
     }
 
-    div[class*="st-key-input_card"],
-    div[class*="st-key-result_card"] {
+    div[class*="st-key-input_card"] {
         border-radius: 16px;
         padding: 1.8rem 1.8rem;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
@@ -54,20 +50,11 @@ st.markdown(
         min-height: 850px;
         display: flex;
         flex-direction: column;
-    }
-
-    div[class*="st-key-input_card"] {
         background-color: #ffffff;
         border: 1px solid #eef0f4;
     }
 
-    div[class*="st-key-result_card"] {
-        background-color: #ffffff;
-        border: 1px solid #eef0f4;
-    }
-
-    div[class*="st-key-input_card"] h2,
-    div[class*="st-key-result_card"] h2 {
+    div[class*="st-key-input_card"] h2 {
         font-size: 1.4rem;
         font-weight: 700;
         color: #182848;
@@ -76,17 +63,92 @@ st.markdown(
         padding-bottom: 0.6rem;
     }
 
+    /* ---- Result card: dark "signal" gauge theme ---- */
+    div[class*="st-key-result_card"] {
+        border-radius: 20px;
+        padding: 0;
+        box-shadow: 0 8px 24px rgba(10, 25, 20, 0.35);
+        margin-bottom: 1.2rem;
+        min-height: 850px;
+        display: flex;
+        flex-direction: column;
+        background: radial-gradient(120% 120% at 50% 0%, #1f4438 0%, #142e26 45%, #0b1c17 100%);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        overflow: hidden;
+        position: relative;
+    }
+
+    .signal-inner {
+        padding: 2rem 2rem 1.5rem 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        flex: 1;
+        color: #e9e7dc;
+    }
+
+    .signal-title {
+        font-family: Georgia, 'Times New Roman', serif;
+        font-style: italic;
+        font-size: 2.1rem;
+        font-weight: 400;
+        color: #f4f1e6;
+        margin-bottom: 0.4rem;
+        letter-spacing: 0.5px;
+    }
+
+    .signal-subtitle {
+        font-size: 0.92rem;
+        color: #b7c8bf;
+        max-width: 320px;
+        line-height: 1.4;
+        margin-bottom: 1.5rem;
+    }
+
+    .gauge-wrap {
+        position: relative;
+        width: 280px;
+        height: 200px;
+        margin: 0.5rem auto 1rem auto;
+    }
+
+    .gauge-caption {
+        font-size: 0.85rem;
+        color: #cfe0d7;
+        margin-top: -0.3rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .gauge-subcaption {
+        font-size: 0.8rem;
+        color: #8fa79b;
+        margin-bottom: 1.2rem;
+    }
+
+    .gauge-score-text {
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 2.6rem;
+        font-weight: 700;
+        fill: #f4f1e6;
+    }
+
+    .gauge-score-max {
+        font-size: 1rem;
+        fill: #8fa79b;
+    }
+
     .section-label {
         font-size: 1.0rem;
         font-weight: 600;
-        color: #4b6cb7;
+        color: #1f4438;
         margin-top: 1.0rem;
         margin-bottom: 0.4rem;
     }
 
     .stButton>button {
         width: 100%;
-        background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+        background: linear-gradient(90deg, #1f4438 100%, #142e26 0%);
         color: white;
         font-size: 1.1rem;
         font-weight: 700;
@@ -103,43 +165,16 @@ st.markdown(
         color: white;
     }
 
-    .result-placeholder {
-        text-align: center;
-        color: #6b7280;
-        font-size: 1.05rem;
-        padding: 3rem 1rem;
-    }
-
-    .score-card {
-        text-align: center;
-        padding: 1.5rem 1rem 2rem 1rem;
-    }
-
-    .score-label {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #4b5563;
-        margin-bottom: 0.5rem;
-    }
-
-    .score-value {
-        font-size: 4rem;
-        font-weight: 800;
-        background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 0.5rem;
-    }
-
-    .interpretation-box {
-        background-color: #f0f4ff;
-        border-left: 5px solid #4b6cb7;
-        padding: 1rem 1.2rem;
+    .signal-interpretation {
+        background-color: rgba(255, 255, 255, 0.06);
+        border-left: 4px solid #8fd6b4;
+        padding: 0.9rem 1.1rem;
         border-radius: 10px;
-        color: #1f2937;
-        font-size: 1.0rem;
-        margin-top: 1rem;
+        color: #eef2ee;
+        font-size: 0.95rem;
+        margin-top: 0.5rem;
         text-align: left;
+        max-width: 340px;
     }
 
     .disclaimer {
@@ -175,6 +210,64 @@ if "prediction_result" not in st.session_state:
     st.session_state.prediction_result = None
 if "prediction_error" not in st.session_state:
     st.session_state.prediction_error = None
+
+
+# =========================================================
+# GAUGE HELPER
+# =========================================================
+def render_gauge_svg(score, max_score=10.0):
+    """
+    Renders a semicircle 'dial' gauge (0 to max_score) as inline SVG,
+    styled to match the dark signal-card theme.
+    score = None -> empty/zero gauge (placeholder state)
+    """
+    import math
+
+    clamped = 0.0 if score is None else max(0.0, min(float(score), max_score))
+    pct = clamped / max_score
+
+    cx, cy, r = 140, 150, 100
+    start_angle = 180  # left
+    end_angle = 0       # right (going over the top)
+
+    def polar_to_xy(angle_deg):
+        angle_rad = math.radians(angle_deg)
+        x = cx + r * math.cos(angle_rad)
+        y = cy - r * math.sin(angle_rad)
+        return x, y
+
+    # Track (full arc, left to right over the top)
+    x1, y1 = polar_to_xy(start_angle)
+    x2, y2 = polar_to_xy(end_angle)
+    track_path = f"M {x1:.2f},{y1:.2f} A {r},{r} 0 0 1 {x2:.2f},{y2:.2f}"
+
+    # Progress arc
+    progress_angle = start_angle - (start_angle - end_angle) * pct
+    xp, yp = polar_to_xy(progress_angle)
+    large_arc = 1 if (start_angle - progress_angle) > 180 else 0
+    progress_path = f"M {x1:.2f},{y1:.2f} A {r},{r} 0 {large_arc} 1 {xp:.2f},{yp:.2f}"
+
+    circumference = math.pi * r
+    score_display = "0.0" if score is None else f"{clamped:.1f}"
+    needle_color = "#8fd6b4" if score is not None else "#33564a"
+
+    svg = f"""
+    <svg viewBox="0 0 280 190" width="280" height="190" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#4f8f76"/>
+                <stop offset="100%" stop-color="#a9e4c6"/>
+            </linearGradient>
+        </defs>
+        <path d="{track_path}" fill="none" stroke="#2a4a3f" stroke-width="10" stroke-linecap="round"/>
+        <path d="{progress_path}" fill="none" stroke="url(#gaugeGrad)" stroke-width="10" stroke-linecap="round"/>
+        <circle cx="{xp:.2f}" cy="{yp:.2f}" r="7" fill="{needle_color}" stroke="#0b1c17" stroke-width="2"/>
+        <text x="140" y="140" text-anchor="middle" class="gauge-score-text" font-family="Georgia, 'Times New Roman', serif">{score_display}</text>
+        <text x="140" y="165" text-anchor="middle" class="gauge-score-max" font-family="Georgia, 'Times New Roman', serif">/ {int(max_score)}</text>
+    </svg>
+    """
+    return svg
+
 
 # =========================================================
 # MAIN LAYOUT — TWO COLUMNS
@@ -265,7 +358,7 @@ if predict_clicked:
     st.session_state.prediction_result = None
     st.session_state.prediction_error = None
 
-    with st.spinner("Analyzing student data and generating prediction..."):
+    with st.spinner("Reading the signal... running your habits through the model."):
         try:
             response = requests.post(API_URL, json=payload, timeout=10)
 
@@ -297,55 +390,72 @@ if predict_clicked:
             st.session_state.prediction_error = f"An unexpected error occurred: {e}"
 
 # ---------------------------------------------------------
-# RIGHT CONTAINER — RESULT
+# RIGHT CONTAINER — RESULT (dark "Mental Health Signal" gauge card)
 # ---------------------------------------------------------
 with right_col:
     with st.container(key="result_card"):
-        st.markdown("<h2>📊 Prediction Result</h2>", unsafe_allow_html=True)
 
         if st.session_state.prediction_error:
+            st.markdown('<div class="signal-inner">', unsafe_allow_html=True)
+            st.markdown('<div class="signal-title">Mental Health Signal</div>', unsafe_allow_html=True)
             st.error(st.session_state.prediction_error)
+            st.markdown('</div>', unsafe_allow_html=True)
 
         elif st.session_state.prediction_result is not None:
             score = st.session_state.prediction_result
 
+            # score is assumed to be on a 0-10 scale; adjust max_score if your
+            # model actually outputs a different range.
             if score < 4.0:
                 interpretation = (
                     "Low mental health score. Consider paying more attention to "
                     "stress, sleep, and overall lifestyle."
                 )
-                emoji = "🔴"
             elif 4.0 <= score <= 7.0:
                 interpretation = (
                     "Moderate mental health score. There may be room for "
                     "improvement in lifestyle balance."
                 )
-                emoji = "🟡"
             else:
                 interpretation = (
                     "Good mental health score based on the provided lifestyle "
                     "and social media habits."
                 )
-                emoji = "🟢"
+
+            gauge_svg = render_gauge_svg(score, max_score=10.0)
 
             st.markdown(
                 f"""
-                <div class="score-card">
-                    <div class="score-label">Predicted Mental Health Score</div>
-                    <div class="score-value">{score:.2f}</div>
-                    <div style="font-size: 2rem;">{emoji}</div>
-                    <div class="interpretation-box">{interpretation}</div>
+                <div class="signal-inner">
+                    <div class="signal-title">Mental Health Signal</div>
+                    <div class="signal-subtitle">
+                        A quick read on how habits, screen time, and stress are
+                        trending — modeled from your daily rhythm, not a diagnosis.
+                    </div>
+                    <div class="gauge-wrap">{gauge_svg}</div>
+                    <div class="gauge-caption">Your predicted score</div>
+                    <div class="signal-interpretation">{interpretation}</div>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
 
         else:
+            gauge_svg = render_gauge_svg(None, max_score=10.0)
             st.markdown(
-                """
-                <div class="result-placeholder">
-                    👈 Enter your information and click the prediction button
-                    to see the result.
+                f"""
+                <div class="signal-inner">
+                    <div class="signal-title">Mental Health Signal</div>
+                    <div class="signal-subtitle">
+                        A quick read on how habits, screen time, and stress are
+                        trending — modeled from your daily rhythm, not a diagnosis.
+                    </div>
+                    <div class="gauge-wrap">{gauge_svg}</div>
+                    <div class="gauge-caption">Your score will appear here</div>
+                    <div class="gauge-subcaption">
+                        Fill in the form and submit to generate a predicted
+                        mental health score from 0–10.
+                    </div>
                 </div>
                 """,
                 unsafe_allow_html=True
