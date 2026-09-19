@@ -389,9 +389,10 @@ if predict_clicked:
         except Exception as e:
             st.session_state.prediction_error = f"An unexpected error occurred: {e}"
 
-# ---------------------------------------------------------
+
 # RIGHT CONTAINER — RESULT (dark "Mental Health Signal" gauge card)
-# ---------------------------------------------------------
+
+
 with right_col:
     with st.container(key="result_card"):
 
